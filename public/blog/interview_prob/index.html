@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>An Interview Problem::Peter Shaffery</title>
+    <base href="https://petershaffery.com">
+    <meta name="description" content="a website">
+    <meta name="author" content='Peter Shaffery'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/peter.min.css">
+
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+
+    <script src="https://use.fontawesome.com/50b69aebd2.js"></script>
+
+    
+        <link rel="icon" type="image/ico" href="https://petershaffery.com/favicon.ico">
+    
+
+</head>
+
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+           extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+    });
+    MathJax.Hub.Queue(function() {
+      
+      
+      
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i = 0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+
+    MathJax.Hub.Config({
+    
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+</script>
+
+
+    <body>
+        <div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row p-0">
+        <a class="navbar-brand mr-sm-auto" href="https://petershaffery.com">Peter Shaffery</a>
+        <div class="navbar-nav flex-row">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/about">about</a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/">blog</a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/about/work">work</a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/about/contact">contact</a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+
+        <div id="content">
+        
+<div class="container">
+    <h1 id="introduction">Introduction</h1>
+<p>A friend of mine is in the process of applying for jobs, which means fielding a bunch of technical questions. As someone who (hopes) to be entering the job market next year, I&rsquo;m really not looking forward to these. As a mathematician I&rsquo;m generally slow; my work process is usually to meander between solution strategies while I try grok the problem. So the prospect of having to answer a bunch of &ldquo;gotcha&rdquo; problems under the gun isn&rsquo;t wildy appealing to me. I suspect that I&rsquo;m not alone in this; I&rsquo;m pretty sure none one every really &ldquo;loves&rdquo; job interviews, but among my friends the impression that I&rsquo;ve gotten is that technical questions are a special kind of painful.</p>
+<p>Since this is all on my mind anyway, I thought it would be fun to post my attempt at a stream-of-consciousness solve of a technical problem that I was recently discussing with said job-seeking friend. In my experience online solutions to these kinds of problems typically present the &ldquo;clean&rdquo; solve of a problem, that is, the finished product you transcribe from 5 pages of disorganized scrap paper that makes the solution seem obvious and intuitive.</p>
+<p>While clean solutions are very nice to grade or read if you&rsquo;re trying to learn the source material, they can also be kind of daunting. They make the solution seem like something that gets pulled out of thin air, without really giving a feel for how you, the reader, might have solved it yourself.</p>
+<p>What follows is therefore my attempt to provide something different: a messy solution. I&rsquo;ve lightly edited it for readability, but otherwise what follows is (more or less) my real-time attempt to solve a technical interview problem.</p>
+<h1 id="the-problem">The Problem</h1>
+<p>You&rsquo;re playing a game with an urn containing 9 white balls and 18 black ones. On each turn, you draw two balls at random from the urn. If both balls are the same color, then you add a single black ball to the urn, otherwise you add a single white ball. What is the probability that the last remaining ball is white? How about if you started with 18 black balls and 36 white ones?</p>
+<h1 id="the-solve">The Solve</h1>
+<p>Okay so right off the bat this sounds like a problem off of my Probability and Statistics prelim exam; a classic, birth-death-y type probability question which to be entirely frank I&rsquo;m crap at. When studying for said prelim this was the problem type that I planned on doing the worst on, although if I recall correctly I ended up being able to handle it (I think it was something about skiers stranded atop a mountain and descending randomly in a gondola, but I could be misremembering.)</p>
+<p>Let&rsquo;s get to it. If you&rsquo;re like me, and read a lot of blogs and stuff about how to solve these kinds of problems, you&rsquo;ll know that the canonical advice is always to start by reducing the size of the problem. So let&rsquo;s consider the simple case where we have only 1 white ball, and 2 black balls. Well, there&rsquo;s only three possible pairings of balls, and two pairings are equivalent: we could either draw both black, or one of the black and one white.</p>
+<p>In the case where we draw two black we&rsquo;ll leave one white remaining, to which we&rsquo;ll add another black, leaving us with 2 balls of different colors. On our next turn then we&rsquo;re guaranteed to draw two balls of different colors and then add a white one, completing the game with a single white ball. Now the other case: if we draw either black and the white, then we&rsquo;ll add a single white one to the black we left behind, and now we&rsquo;re in the same situation as the first case: two balls of different color, so guaranteed to end with a single white. Okay so with 2 black and 1 white it&rsquo;s guaranteed that we&rsquo;ll finish with a white ball (probability 1). That&rsquo;s kind of cute, although it doesn&rsquo;t feel very illuminating.</p>
+<p>My instinct now is to just shoot for the big enchilada and try and formulate the game as a generalized random process. Even if it doesn&rsquo;t lead me to the answer right away, my hope is that something funky will fall out and I can exploit that to find the solution. Let&rsquo;s introduce some notation, denote the turn number as $n$ and number of black and white balls at the start of turn $n$ as $B_n$ and $W_n$ respectively. We can then model the game as a random process $(B_n,W_n)$ occuring on the lattice of integers. The random process is governed by transition probabilities, that is, the probability of going from state $(B_n,W_n) \rightarrow (B_{n+1},W_{n+1})$. Since there&rsquo;s only 4 possible draw outcomes (2 black, 2 white, 1 black and 1 white, or 1 white and then 1 black) we can write these probabilities out directly:</p>
+<table>
+<thead>
+<tr>
+<th>Draw</th>
+<th>Prob</th>
+<th>Outcome</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2 black</td>
+<td>$\frac{B_n}{B_n+W_n} * \frac{B_n-1}{B_n+W_n-1}$</td>
+<td>$(B_n,W_n) \rightarrow (B_n-1,W_n)$</td>
+</tr>
+<tr>
+<td>1 black, 1 white</td>
+<td>$\frac{B_n}{B_n+W_n} * \frac{W_n}{B_n+W_n-1}$</td>
+<td>$(B_n,W_n) \rightarrow (B_n-1,W_n)$</td>
+</tr>
+<tr>
+<td>1 white, 1 black</td>
+<td>$\frac{W_n}{B_n+W_n} * \frac{B_n}{B_n+W_n-1}$</td>
+<td>$(B_n,W_n) \rightarrow (B_n-1,W_n)$</td>
+</tr>
+<tr>
+<td>2 white</td>
+<td>$\frac{W_n}{B_n+W_n} * \frac{W_n-1}{B_n+W_n-1}$</td>
+<td>$(B_n,W_n) \rightarrow (B_n+1,W_n-2)$</td>
+</tr>
+<tr>
+<td>Table: All potential state transitions</td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Oh this is actually kind of interesting. To be frank, I didn&rsquo;t expect this level of generality to be productive (and it&rsquo;s technically not still clear that it is), but actually looking at this makes it clear just how &ldquo;stacked&rdquo; the game is against black. In all but one outcome black is the only color that&rsquo;s reducded. Indeed, only if we draw two white balls does that number of white remaining decrease. In every other case we lose a black but white stays the same.</p>
+<p>So now that we have these transitions written out we can start to think about how to solve the problem. The usual trick for these kinds of questions is to find some cutesy recursion that let&rsquo;s you solve for the probability (see <a href="https://medium.com/i-math/the-drunkards-walk-explained-48a0205d304">here</a> for example). Since this is a random walk on a lattice, however, I&rsquo;m thinking that I&rsquo;ll need to &ldquo;reduce&rdquo; the process in some way, like project $(B_n,W_n)$ down to just $(W_n)$. Hmmm that seems like it might be difficult. Before I do that I think it would be worthwhile to think about equivalent formulations to the satement &ldquo;the last ball remaining is white&rdquo;. I think doing this will help me get some better graps on the recursion that I need to set up (or figure out if that&rsquo;s even the right approach at all).</p>
+<p>The most obvious equivalent statement is &ldquo;there exists an $\hat{n}$ such that $(B_{\hat{n}},W_{\hat{n}})=(1,1)$. As we saw in the 3-ball case, this state can only lead to a single white ball. Unfortuntately this doesn&rsquo;t seem very helpful to me. It&rsquo;s not at clear to me that $(1,1)$ is an easier end-state to grapple with than $(0,1)$, so I&rsquo;m going to re-read my notes and try and think of an alternative.</p>
+<p>Okay so looking back at the transition probability table, another interesting fact jumps out at me: black is the only color that can ever increase. If we run out of black balls &ldquo;prematurely&rdquo;, that is, while we have more than 1 white ball remaining, black can be &ldquo;resurrected&rdquo;. However the same is not true of white. If at any point $W_n=0$ then we are guaranteed that the last ball will be black. This asymmetry strikes me as exploitable, it might make it easier to calculate the probability &ldquo;the last ball remaining is black&rdquo; (which I&rsquo;ll denote $p_b$), rather than &ldquo;the last ball remaining is white&rdquo; (the probability of which will be denoted $p_w$). Since these are the only two outcomes $p_w = 1-p_b$. Furthermore, because the number of white balls is strictly decreasing, &ldquo;the last ball is black&rdquo; is equivalent to &ldquo;there exists a $\hat{n}$ such that $W_{\hat{n}}=0$. I&rsquo;m tempted to at this point to just consider the projected process of $W_n$, but I think this will miss some key info. For example, there&rsquo;s no way to disinguish if $W_n=1$ signals the end of game without knowing the value of $B_n$. So I think we&rsquo;ll need to stay in the full space.</p>
+<p>Okay let&rsquo;s go back to the transition table. Something else that&rsquo;s been floating around in the back of my head is that, despite there being four possible draws, there&rsquo;s actually only two possible state transitions. We can either lose just a black ball (which I&rsquo;ll call &ldquo;transition A&rdquo;), or gain a black ball and lose two whites (&ldquo;transition B&rdquo;). The former happens with probability $\frac{B_n(B_n-1) + 2 B_n W_n}{(B_n+W_n)(B_n+W_n-1)}$ and the latter happens with probability $\frac{W_n(W_n-1)}{(B_n+W_n)(B_n+W_n-1)}$</p>
+<p>The problem states that we start with $W_0=9$. That means that, to have one black remaining (ie. to get $W_n$ to 0) we need to have exactly $9$ of transition B <strong>(I made a mistake here, which seriously prolonged the time it took me to get to the solution. Much of what follows is floundering based on that mistake, but for transparency I left it in.)</strong>. So that&rsquo;s necessary to get one black remaining. Is it sufficient? Not clear to me, I think it depends on what could force &ldquo;one white remaining&rdquo;. We&rsquo;ve already seen that if we get into a situation with two black and 1 white remaining that it forces &ldquo;one white&rdquo;. What about other configurations of 3 balls? If we have 3 black then we&rsquo;ve hit our &ldquo;W=0&rdquo; condition so we&rsquo;re guaranteed &ldquo;one black&rdquo;. What about 3 white? Then we&rsquo;re guaranteed to end up in a one black, one white configuration which leads to one white remaining. Okay what about two white, one black? If we draw two whites then we end up with two blacks, so W=0 and we&rsquo;re guaranteed to end on one one black. If we draw one black and one white then we end up in one white one black.</p>
+<p>All this adds up to the following: we need to get 9 of transition B before we end up in any of the following configurations:</p>
+<ul>
+<li>3 white remaining</li>
+<li>2 black, 1 white remaining</li>
+</ul>
+<p>Or, more succintly, we need 9 of transition B before we end up with 1 black, 1 white. As far as I can tell, any sequence leading to 1 white remaining has to pass through 1 black, 1 white at some point. So what else can I do here? I started with the idea of trying to find a recursion, but kind of got away from that. Instead I&rsquo;ve been trying to find logically equivalent statements to the condition of interest (ie. &ldquo;ending with one black&rdquo; or &ldquo;ending with one white&rdquo;), that are also easier scenarios to compute combinatorially, but this hasn&rsquo;t been very succesful. Since the reformulation hasn&rsquo;t really been going anywhere, I&rsquo;m going to go back and try the recursion thing.</p>
+<p>I&rsquo;m going to try and set up a recursion for the probability of &ldquo;1 black remaining&rdquo;. Say at time $n$ the probability of &ldquo;1 black remaining&rdquo; is $\pi_n$. Intuitively, we expect that if we get transition B, then $\pi_{n+1} &gt; \pi_n$, and that otherwise $\pi_{n+1} &lt; \pi_n$. It&rsquo;ll be interesting to see if this intuition plays out.</p>
+<p>Oh neat I just noticed something while puzziling over the recursion. Since the probability of transition B is proportional to $W(W-1)$, then if at any point $W=1$ we can no longer grow the number of black balls since the prob of Draw B will be 0. Instead we can only get Draw A, so B will monotonically decrease and $W$ will stay constant. Okay so we can now state that &ldquo;1 black remaining&rdquo; is equivalent to getting exactly 9 of transition B before we hit $W=1$. Oh but W decreases 2 at a time. Shoot, I made a mistake. Somehow I got transition B mixed up with transition A, and I&rsquo;ve been assuming that white decreases 1 at a time. But since it goes down by 2, and we&rsquo;re starting with 9 white balls, then we&rsquo;re guaranteed to hit W=1 at some point, at which time it will be impossible for white to decrease any further, because the only scenario where we lose 2 white balls is if we draw 2 white balls, and that&rsquo;s not possible anymore. Furthermore, once we have one white ball left we&rsquo;re going to lose one black ball per turn, $W_n=1$ is like a barrier and once we hit it we&rsquo;re stuck there until we run out of black balls.</p>
+<p>Hmmm this solution tingles my spidey sense, it feels too cute to be real. Maybe it&rsquo;s just cynacism after so many years getting burneD in grad school, but any time an answer works out this nicely I get a huge red flag in my head that I maybe did something wrong. I&rsquo;m gonna chuck the problem into R and see if it actually is impossible to not end up with 1 white. Please hold&hellip;</p>
+<p>&hellip;Okay yeah that&rsquo;s correct. So the probability that the last ball is white, when we start at $(18,9)$ is 1. They also asked us to do the case where we start at $(18,36)$. My gut says that in this case it&rsquo;s guaranteed that we end on a black ball. This post is already pretty long, so I&rsquo;m just going to chuck it into R as well, and lo and behold my gut is correct.</p>
+<h1 id="conclusions">Conclusions</h1>
+<p>So all told this took me around 1.5 hours to solve (I told you I&rsquo;m a slow mathematician!). My confusion around transition B definitely added a good 40 minutes to my solve time, and that&rsquo;s pretty typicaly of my work style. I can sometimes get &ldquo;functionally fixated&rdquo; on certain solution strategies, even if those strategies are built around some error. Besides some frustration at my mistake, I&rsquo;m pretty satisfied with my work here. Even though I was maybe overly circumspect (the only observation you technically &ldquo;need&rdquo; to solve the problem is that white only decreases by 2) I feel that I sussed out some of the other mechanics underlying the problem.</p>
+<p>With that said, I didn&rsquo;t love this problem. It has the vibe of a trick quesiton, like the reader is expected to treat it like a standard probability problem, when its solution is kind of unique to the setup of the game. It&rsquo;s not clear to me that being able to solve this demonstrates a real faculty with probability, but maybe the intent is just to see how people struggle with unusual challenges. I suppose it&rsquo;s also nice that the solver doesn&rsquo;t ~technically~ have to have a lot of probability knowledge to solve it, so it&rsquo;s more open to say, someone with a CS background.</p>
+<p>Anyhow, that&rsquo;s how I solved this interview problem. I&rsquo;ll take one (1) job now, please!</p>
+
+</div>
+
+        </div>
+        <div id="footer">
+    <hr>
+      <br/>
+      <small>
+        <small>
+          <div class="container text-center mb-2">
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img width=50px alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>
+            Built with <a href="https://gohugo.io/">Hugo</a>, adapted from <a href="https://github.com/ojroques/hugo-researcher">Researcher</a>
+        </small>
+      </small>
+    </div>
+</div>
+
+    </body>
+</html>

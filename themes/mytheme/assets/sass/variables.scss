@@ -1,0 +1,38 @@
+// Sizes
+$max-width: 750px;
+$margin-y: 16px;
+$avatar-size: 200px;
+
+// Colors
+$green: #28a745;
+$red: #E98074;
+$blue: #15181C;
+$yellow: #FFFFE6;
+
+// Fonts
+$font-base: "Fire Code";
+$font-title: "Fira Code";
+$font-body: "Fira Code";
+
+// Placeholders
+%link-default {
+    color: $red;
+    text-decoration: none;
+    &:hover {
+        color: $red;
+        text-decoration: underline;
+    }
+}
+%link-dark {
+    color: inherit;
+    text-decoration: none;
+    &:hover {
+        color: inherit;
+        text-decoration: underline;
+    }
+}
+%table-cell {
+    border: 1px solid #cccccc;
+    padding: 6px 12px;
+    text-align: left;
+}

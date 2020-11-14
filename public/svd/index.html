@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <title>Grokking Tensors::Proof by Accident</title>
+    <base href="https://petershaffery.com">
+    <meta name="description" content="a website">
+    <meta name="author" content='Peter Shaffery'>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    
+    <link rel="stylesheet" href="/sass/peter.min.css">
+
+    
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap" rel="stylesheet">
+
+    <script src="https://use.fontawesome.com/50b69aebd2.js"></script>
+
+    
+        <link rel="icon" type="image/ico" href="https://petershaffery.com/favicon.ico">
+    
+
+</head>
+
+    <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+    MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      displayMath: [['$$','$$']],
+      processEscapes: true,
+      processEnvironments: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre'],
+      TeX: { equationNumbers: { autoNumber: "AMS" },
+           extensions: ["AMSmath.js", "AMSsymbols.js"] }
+    }
+    });
+    MathJax.Hub.Queue(function() {
+      
+      
+      
+      var all = MathJax.Hub.getAllJax(), i;
+      for(i = 0; i < all.length; i += 1) {
+          all[i].SourceElement().parentNode.className += ' has-jax';
+      }
+    });
+
+    MathJax.Hub.Config({
+    
+    TeX: { equationNumbers: { autoNumber: "AMS" } }
+    });
+</script>
+
+
+    <body>
+        <div class="container mt-5">
+    <nav class="navbar navbar-expand-sm flex-column flex-sm-row p-0">
+        <a class="navbar-brand mr-sm-auto" href="https://petershaffery.com">Proof by Accident</a>
+        <div class="navbar-nav flex-row">
+            
+                
+                
+                    <a class="nav-item nav-link" href="/">blog</a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/about">about</a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/about/work">work</a>
+                    
+                        <span class="nav-item navbar-text mx-1">/</span>
+                    
+                
+                    <a class="nav-item nav-link" href="/about/contact">contact</a>
+                    
+                
+            
+        </div>
+    </nav>
+</div>
+<hr>
+
+        <div id="content">
+        
+<div class="container">
+    <h1 id="intro">Intro</h1>
+<p>Tensors are a slippery concept. Depending on who you ask you&rsquo;ll hear them described as anything from an N-dimensional array to a basis-independent, bilinear funtcion. Not that these definitions are per se wrong, but I think that one of the things that makes tensors so difficult to grasp is that it&rsquo;s not really clear what these definitions get us and what they have in common. Why would you bother wasting such a sexy, sci-fi word like &ldquo;tensor&rdquo; on something as pedestrian as a data volume? If you know a little analysis then a bilinear functional might potentially seem interesting, but even then I don&rsquo;t think it&rsquo;s entirely clear why this object is important enough to earn a name.</p>
+<p>So with tensors, even into my third year of graduate school I felt like I had a pretty weak grasp of what they were. Certainly having a few grad-level courses in analysis under my belt helped, but at the end of the day I couldn&rsquo;t really see why one would think to define a concept like &ldquo;tensors&rdquo; in the first place. It wasn&rsquo;t until I took a course in Numerical Linear Algebra (of all things) that it really clicked for me. Specifically it was seeing an expansion of the Singular Value Decomposition (SVD) that finally made me see the light.</p>
+<h1 id="svds">SVDs</h1>
+<p>For a long time I thought that the SVD was kind of ugly, especially compared to the more attractive and conceptually elegent eigenvalue decomposition. I understood eigenvalues and eigenvectors on a pretty gut-level, and so the eigenvalue decomposition seemed natural and its properties were fairly obvious to me. For many of the other well-known matrix factorizations like the LU decomposition or the QR decomposition, I could at least see the attractiveness in their computational properties, even if the theoretical component wasn&rsquo;t as strong. But the SVD occupied a weird place somewhere between these two extremes. It had nice computational properties, but these were driven by some mechanics that I couldn&rsquo;t quite <a href="https://en.wikipedia.org/wiki/Grok">grok</a>.</p>
+<p>It turned out that I had just been looking at it in the wrong way. For most of my career as a mathematician, the SVD was presented to me in this way:</p>
+<blockquote>
+<p>Let $M$ be an $n \times m$ matrix. Then $M$ can be factorized as $M = U \Sigma V^*$, where $U$ and $V$ are $n \times n$ and $m \times m$ unitary matrices and $\Sigma$ is an $n \times m$ diagonal matrix.</p>
+</blockquote>
+<p>And okay great, it&rsquo;s a convenient factorization. It lets you define a <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition#Pseudoinverse">pseudo-inverse</a>, ditching rows or columns of $\Sigma$ gets you the best <a href="https://en.wikipedia.org/wiki/Singular_value_decomposition#Low-rank_matrix_approximation">low-rank approximation</a> of M, and if you look at the rows/columns of $U$ and $V$ then you get <a href="https://en.wikipedia.org/wiki/Principal_component_analysis">PCA</a>. But where do these properties come from? What does this factorization really represent?</p>
+<p>Let&rsquo;s look at another way of writing it. First, for convenience let&rsquo;s assume $M$ is real and square (ie. $n=m$), so that U and V are as well. Now, just through matrix algebra we can rewrite the above definition:</p>
+<blockquote>
+<p>Let $M$ be an $n \times m$ matrix. Then $M = \sum_{i=1}^n \sigma_i u_i v_i^T$, where $u_i$ and $v_i$ are $n \times 1$ vectors, and $\sigma_i$ are scalars.</p>
+</blockquote>
+<p>In this reformulation $u_i$ and $v_i$ are simply the columns of $U$ and $V$ respectively, and the $\sigma_i$ are the diagonal elements of $\Sigma$. Even though this formulation is expressing the same relationship, I think it&rsquo;s a little easier to interpret. The upshot here is that <em>any</em> given matrix can be decomposed into a sum of outer products of vectors. Putting that another way: the space of outer products of all pairs of vectors $x,y\in \mathbb{R}^n$ is a <em>basis</em> for the space of all matrices on those same vectors. In some way, the outer product $xy^T$ is a &ldquo;natural&rdquo; way to make matrices.</p>
+<p>This is the core idea of a tensor space. It&rsquo;s the observation that, if you have some vector space $X$, you can used the &ldquo;outer product&rdquo; (often called the &ldquo;tensor product&rdquo;, for reasons we&rsquo;ll talk about shortly) to construct the set of all linear functions on $X$.</p>
+<h1 id="okay-but-why">Okay But Why</h1>
+<p>So what about outer products makes them a &ldquo;natural&rdquo; candidate to construct matices? The answer comes easier with a change of notation. Observe that, when we transpose a column vector into a row vector, what we&rsquo;re really doing is implicitly defining a scalar-valued function over $X$. That is, imagine a function over $X=\mathbb{R}^n$, defined $f_x(\cdot) = \langle x, \cdot \rangle$, where $\langle x, y \rangle = \sum_{i=1}^n x_i y_i$ is the usual inner product over $\mathbb{R}^n$ and $\cdot$ is a placeholder for the function input. Because of how we define matrix (and row vector) multiplication, observe that we could also fairly denote this function $f_x(\cdot) = x^T \cdot$ (this is sort of the same reasoning underlying the bra-ket notation from quantum physics). Because of the properties of inner products (or matrix multiplication) we can see immediately that $f_x$ is linear, as well as scalar-valued.</p>
+<p>Functions like $f_x$ are very special. It turns out that for any suitably &ldquo;nice&rdquo; vector space $X$, all linear, scalar-valued functions can be written like $f_x$. That is, for any linear, scalar-valued function $f$ there exists a vector $x$ which reproduces $f$ when you plug $x$ into the left side of an inner product (ie. $f=f_x$). For this reason functions like $f_x$ get the special name of &ldquo;functionals&rdquo;.</p>
+<p>Having defined functionals, we might observe that they also provide a very natural way to create a linear function from a vector space $X$ to itself. From $X$ let&rsquo;s take two vectors $x$ and $y$, and define a new, <em>vector-valued</em> function $g_{xy}(\cdot) = f_x(\cdot) y$. Since the output of $f_x$ is a scalar, we can see that $g_{xy}$ works by projecting the input $\cdot$ onto the one-dimensional subspace spanned by $y$. Furthermore, since $f_x$ is linear, so too is $g_{xy}$.</p>
+<p>When $x$ and $y$ are n-dimensional, real-valued vectors then $g_{xy}$ gets a special name too: we call it a &ldquo;matrix&rdquo;. Swapping the notation of $f_x$ (and changing the order of multiplication) makes this equivalence clear: $g_{xy}(\cdot) = yx^T\cdot$. In fact, this notational equivalence is really just the definition of the outer product.</p>
+<h1 id="putting-it-all-together">Putting It All Together</h1>
+<p>So we&rsquo;ve established (using the SVD) that outer products create a natural basis for the vector space of $n\times n$ matrices. They do this because the outer product $yx^T$ is really just a pairing of half an inner product ($x^T$), and a vector to span over ($y$). By weighting and summing over $n$ of these 1-dimensional, linear operators we can obtain any n-dimensional linear operator $M$.</p>
+<p>At this point I believe that many of the nice properties of the SVD come into clearer view. If we wanted to get a low-rank (ie. &ldquo;low-dimensional&rdquo;) approximation of $M$ we can do so simply by truncating the sum $M = \sum_{i=1}^n \sigma_i u_i v_i^T$. This isn&rsquo;t any mysterious property of the matrix factorization, it simply follows from the obvious properties of the basis expansion of a vector. Similarly, when we&rsquo;re performing a PCA what we&rsquo;re really doing is looking at the 1-dimensional basis matrices which make up some covariance matrix $M$ (there&rsquo;s a little extra interpretation about covariance matrices involved, but that&rsquo;s beyond our scope here).</p>
+<p>But why do we call these outer products &ldquo;tensors&rdquo;? Why don&rsquo;t we just talk about outer products? Well, so far we&rsquo;ve been working in the fairly simple vector space $R^n$. In this setting the outer product can be clearly defined in terms of standard matrix/linear algebra; we can talk about &ldquo;row&rdquo; and &ldquo;column&rdquo; vectors and have that make sense in terms of two types of arrays of numbers and the kinds of operations allowed between them. In this case the &ldquo;outer product&rdquo; calculation is trival (or at least, we could in principal perform it exactly, given enough computing power). However in many cases we might be dealing with a more exotic vector spaces, such as $L^2$ (the space of square-integrable functions). For these spaces we may not even have a closed-form expression for the vectors of interest, so it doesn&rsquo;t make as much sense to pretend like we can actually do out the vector algebra necessary to convert two vectors into an &ldquo;outer product&rdquo;.</p>
+<p>Instead we think about these products as abstract, un-evaluated pairings of vectors, one of which of we can take the inner product against, and the other to be scaled by the result of that inner product. Since this pairing also belongs to a vector space, we decide that it has earned the special name of &ldquo;tensor&rdquo;, since it&rsquo;s a vector, plus some extra properties (it&rsquo;s also a linear operator), and the pairing which produces a tensor is called a &ldquo;tensor product&rdquo;. Since so many things are vectors, this is a very permissive definition, and (among other things) it means that we can talk about scalars, vectors, matrices, and higher dimensional arrays as &ldquo;tensors&rdquo;, so long as we&rsquo;re clear about the allowed operators between them (ie. inner products).</p>
+<p>Once we&rsquo;ve reached this level of abstraction we can really open up the throttle. For one thing, we might decide that tensor products are allowed not just between one row and one column vectors, but between a row and a row, or a column and a column vector. This doesn&rsquo;t make sense from the outer product point of view, but if we&rsquo;re not requiring that the tensor product be evaluated using matrix multiplication there&rsquo;s no reason to prohibit this. More formally, we would say that tensor products are allowed between any elements of a vector space $X$ (which we&rsquo;ve been calling &ldquo;column vectors&rdquo;), as well as between any elements of the space of functionals over $X$ (which we&rsquo;ve been calling &ldquo;row vectors&rdquo;). We also might take the tensor product between two tensors themselves. You can think about this as following from the fact that tensors are themselves vectors, but you can also think about this as implying that tensors are just &ldquo;bundles&rdquo; of vectors and functionals. The outer product bundles a vector and a function, and the tensor product of two such tensors would give us a bundle of two vectors and two functionals. The behavior of the tensor as an operator (what we call it&rsquo;s &ldquo;rank&rdquo;) is determined by how many vectors and functionals we choose to put into that bundle.</p>
+<p>It also turns out that many other objects of interest which don&rsquo;t map on to arrays can be considered as specific varieties of tensor. <a href="https://en.wikipedia.org/wiki/Differential_form">Differential forms</a>, for example, are a type of tensor with restricted properties (here the underlying vector space is the tangent space of a surface or manifold). For this reason tensors turn out to be one of those &ldquo;foundational&rdquo; definitions, something like how sets are useful for providing a common terminology for talking about more complex types of math. Tensors also have many neat properties which we don&rsquo;t necessarily follow from the account of them I&rsquo;ve given here (basis independence is a big one that physicists often take as almost definitional of tensors). Nevertheless, I feel like the SVD (and more generally this &ldquo;bundle of vectors&rdquo; perspective) gives an inuitive and concrete way for thinking about what tensors are and why we might be interested in them. Thanks singular value decomposition, we love you!</p>
+
+</div>
+
+        </div>
+        <div id="footer">
+    <hr>
+      <br/>
+      <small>
+        <small>
+          <div class="container text-center mb-2">
+            <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img width=50px alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>
+            Built with <a href="https://gohugo.io/">Hugo</a>, adapted from <a href="https://github.com/ojroques/hugo-researcher">Researcher</a>
+        </small>
+      </small>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,127 @@
+@import "variables";
+
+* {
+    line-height: normal;
+    background-color: $blue;
+    color: $yellow;
+}
+
+body{
+  background-color: $blue;
+  color: $yellow;
+  font-family: $font-body;
+  font-weight: normal;
+}
+.container {
+    max-width: $max-width;
+}
+.navbar-brand {
+    @extend %link-dark;
+    font-size: 2rem;
+    font-family: $font-title;
+    font-weight: bold;
+}
+.nav-link {
+    @extend %link-default;
+}
+#content {
+    a {
+        @extend %link-default;
+    }
+    blockquote {
+        border-left: 4px solid;
+        font-style: italic;
+        margin: $margin-y 0;
+        padding: 8px 8px;
+        & p {
+            margin: 0;
+        }
+    }
+    code {
+        color: $green;
+    }
+    h1, h2, h3, h4, h5, h6 {
+        font-size: medium;
+        font-family: $font-title;
+        font-weight: bold;
+        line-height: normal;
+        margin: 1.2rem 0 0.8rem 0;
+    }
+    @for $i from 1 through 4 {
+        h#{$i} {
+            font-size: 1.2rem + 0.2 * (4 - $i);
+        }
+    }
+    img {
+        display: block;
+        margin: $margin-y auto;
+    }
+
+    pre code {
+        color: inherit;
+    }
+
+    table {
+        margin: $margin-y auto;
+        width: 100%;
+        & tr {
+            background-color: white;
+            border: 1px solid #cccccc;
+            & td {
+                @extend %table-cell;
+            }
+            & th {
+                @extend %table-cell;
+                font-weight: bold;
+            }
+            &:nth-child(2n) {
+                background-color: #f8f8f8;
+            }
+        }
+    }
+
+
+    .img-txt {
+      width: 40%;
+      max-width: 150px;
+      display: inline;
+    }
+
+    .fa-icon {
+      @extend %link-default;
+      font-size: 2rem;
+      margin: 0 1rem 0 0;
+      vertical-align: middle;
+    }
+
+    @media only screen and (max-width: 1080px)  {
+      .avatar-no-mobile > img {
+        display: none;
+      }
+
+    }
+
+    @media only screen{
+      .avatar-no-mobile > img {
+        border-radius: 10%;
+        float: right;
+        margin: -5px 0px 0px 15px;
+        height: $avatar-size;
+        width: $avatar-size;
+      }
+
+    }
+
+    .highlight {
+        margin: $margin-y auto;
+        & > pre {
+            padding: 8px 8px;
+        }
+    }
+
+}
+#footer {
+    a {
+        @extend %link-default;
+    }
+}

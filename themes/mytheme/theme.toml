@@ -1,0 +1,11 @@
+name = "Peter"
+license = "GPL-3.0"
+description = "A simple monospaced resume theme for Hugo."
+
+[author]
+  name = "Peter Shaffery"
+  homepage = "https://petershaffery.org"
+
+[original]
+  name = "Olivier Roques"
+  homepage = "https://oroques.dev/"

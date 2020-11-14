@@ -1,0 +1,37 @@
+title = "Proof by Accident"
+baseURL = "https://petershaffery.com"
+theme = "mytheme"
+disableKinds = ["taxonomy", "term", "RSS", "sitemap", "robotsTXT"]
+enableEmoji = true
+math = true
+
+[params]
+author = "Peter Shaffery"
+description = "a website"
+favicon = "/favicon.ico"
+
+[permalinks]
+  "/" = "/:filename"
+
+[menu]
+  [[menu.main]]
+    name = "about"
+    url = "/about"
+    weight = 2
+  [[menu.main]]
+      name = "blog"
+      url = "/"
+      weight = 1
+
+  [[menu.main]]
+    name = "work"
+    url = "/about/work"
+    weight = 3
+
+  [[menu.main]]
+    name = "contact"
+    url = "/about/contact"
+    weight = 4
+
+[markup.goldmark.renderer]
+  unsafe = true  # allow raw HTML in markdown files
