@@ -24,6 +24,14 @@ body{
 .nav-link {
     @extend %link-default;
 }
+
+pre {
+    color: $green;
+}
+
+#title {
+    font-style: bold;
+}
 #content {
     a {
         @extend %link-default;
@@ -40,6 +48,11 @@ body{
     code {
         color: $green;
     }
+
+    pre code {
+       color: $green; 
+    }
+    
     h1, h2, h3, h4, h5, h6 {
         font-size: medium;
         font-family: $font-title;
