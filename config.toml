@@ -1,5 +1,5 @@
 title = "Proof by Accident"
-baseURL = "https://petershaffery.com"
+baseURL = "https://petershaffery.net"
 theme = "mytheme"
 disableKinds = ["taxonomy", "term", "RSS", "sitemap", "robotsTXT"]
 enableEmoji = true
