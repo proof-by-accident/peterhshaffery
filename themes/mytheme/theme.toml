@@ -4,7 +4,7 @@ description = "A simple monospaced resume theme for Hugo."
 
 [author]
   name = "Peter Shaffery"
-  homepage = "https://petershaffery.org"
+  homepage = "https://petershaffery.net"
 
 [original]
   name = "Olivier Roques"
