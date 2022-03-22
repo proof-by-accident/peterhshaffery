@@ -1,7 +1,7 @@
 ---
 title: "Work"
 ---
-You can find my resume <a href="/resume.pdf">here</a>
+You can find my CV <a href="/cv.html">here</a>
 
 ## Academic Publications
 1. Shaffery, Peter, Bret D. Elderd, and Vanja Dukic. "A note on species richness and the variance of epidemic severity." Journal of Mathematical Biology (2020): 1-20. <a href="https://arxiv.org/abs/1910.02293">[preprint]</a>
